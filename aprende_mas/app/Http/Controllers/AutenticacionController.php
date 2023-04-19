@@ -65,9 +65,11 @@ class AutenticacionController extends Controller
             'nombre_registro' => $request->nombre_registro,
             'apellido_registro' => $request->apellido_registro,
             'foto' => $nombreImagen,
-            'correo' => $request->correo,
-            'contra' => bcrypt($request->contra), 
-            'repetir_contra' => bcrypt($request->contra),
+            'email' => $request->email,
+            'password' => bcrypt($request->password), 
+            'password_confirmed' => bcrypt($request->password_confirmed),
+
+            "fecha_registro" => (new DateTime())->format("Y-m-d"),
             'estado_registro' => 1,
         );
 
@@ -75,7 +77,7 @@ class AutenticacionController extends Controller
         $imagen->storeAs('fotos-perfil/', $nombreImagen);
 
 
-        $nuevoAdmnistrador = new User($data);
+        $nuevoAdmnistrador = new RegistroModels($data);
         $nuevoAdmnistrador->save();
 
         $mensaje = array( 
@@ -118,9 +120,7 @@ class AutenticacionController extends Controller
 //--------------------------------------------------------------------------------------------
     public function iniciarSesion2(Request $request) // Iniciar sesión para administrador
     {
-        //Pedir ayuda porque da error debido a que el campo "correo" se encuentra en otra tabla y no en la misma que "contra"
-        $credenciales = request(['correo', 'contra']);
-
+        $credenciales = request(['email', 'password']);
 
         if (Auth::attempt($credenciales) == false)
         {

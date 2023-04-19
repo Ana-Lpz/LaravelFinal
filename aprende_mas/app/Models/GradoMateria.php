@@ -7,7 +7,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class GradoMateria extends Model
 {
-    //////
     use HasFactory;
 
     protected $table = "grado_materia"; 
