@@ -26,27 +26,18 @@ class MateriaController extends Controller
     //--------------------------------------------------------------------------------------------
     public function listar2(Request $request) //Vista de administrador
     {
-        $materia = MateriaModels::whereNotNull("materia.estado_materia");
-
-        $materia = DB::table('materia') //Preguntar cómo agregar N# de unidades
+        $materia = DB::table('materia')
         ->join("grado_materia", 'materia.id_materia', '=', 'grado_materia.id_materia') 
-        ->join('grado', 'grado_materia.id_grado', '=', 'grado.id_grado')  
-        ->join('unidad', 'unidad.id_materia', '=', 'materia.id_materia')
-        ->select("materia.id_materia", "materia.nombre_materia", "unidad.nombre_unidad", "grado.nivel_academico", "materia.estado_materia")
-        ->orderby("materia.id_materia", "asc")
+        ->join('grado', 'grado_materia.id_grado', '=', 'grado.id_grado') 
+        ->select("materia.id_materia", "materia.nombre_materia","grado.nivel_academico", "materia.estado_materia")
         ->get();
 
+        
+        foreach ($materia as $consulta) {
+            $unidades = Unidad::where('id_materia', $consulta->id_materia)->get();
 
-        for ($i=0; $i < count($materia); $i++) 
-        { 
-            if ($materia[$i]->estado_materia == 1) {
-                $materia[$i]->estado_materia= "activo";
-            }
-            else {
-                $materia[$i]->estado_materia = "inactivo";
-            }
+            $consulta->unidades = count($unidades);
         }
-
 
         return response()->json($materia); 
     }
@@ -97,8 +88,7 @@ class MateriaController extends Controller
         ]);
         $nuevaRelacion->save();
 
-       
-
+    
         return response()->json($nuevaMateria);
     }
     //--------------------------------------------------------------------------------------------

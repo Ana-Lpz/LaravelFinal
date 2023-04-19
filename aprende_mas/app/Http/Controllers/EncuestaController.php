@@ -15,27 +15,13 @@ class EncuestaController extends Controller
 {
     public function listar(Request $request)
     {
-        // 
-
         $encuesta = EncuestaModels::select("encuesta.id_encuesta","encuesta.nombre_encuesta","estado_encuesta");
-        //->join('pregunta', 'pregunta.id_encuesta', '=', 'encuesta.id_encuesta')
         $encuesta = $encuesta->get();
 
         foreach ($encuesta as $consulta) {
             $preguntas = PreguntaModels::where('id_encuesta', $consulta->id_encuesta)->get();
 
             $consulta->preguntas = count($preguntas);
-            // $consulta->preguntas = PreguntaModels::where('id_encuesta', $consulta->id_encuesta)->count();
-        }
-
-        for ($i=0; $i < count($encuesta); $i++) 
-        { 
-            if ($encuesta[$i]->estado_encuesta == 1) {
-                $encuesta[$i]->estado_encuesta= "activo";
-            }
-            else {
-                $encuesta[$i]->estado_encuesta = "inactivo";
-            }
         }
         
         return response()->json($encuesta);
