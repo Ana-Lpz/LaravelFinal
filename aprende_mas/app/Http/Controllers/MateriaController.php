@@ -32,7 +32,7 @@ class MateriaController extends Controller
         ->select("materia.id_materia", "materia.nombre_materia","grado.nivel_academico", "materia.estado_materia")
         ->get();
 
-        
+
         foreach ($materia as $consulta) {
             $unidades = Unidad::where('id_materia', $consulta->id_materia)->get();
 
@@ -45,12 +45,10 @@ class MateriaController extends Controller
     public function obtener(Request $request, $id) //Solo funciona con materias que tengan unidades
     {
         $materia = DB::table('materia') 
-        
+        ->where("materia.id_materia", "=", $id)
         ->join("grado_materia", 'materia.id_materia', '=', 'grado_materia.id_materia') 
-        ->join('grado', 'grado_materia.id_grado', '=', 'grado.id_grado')
-        //Agregar lo del #unidades cuando sepamos cómo hacerlo
-        ->join('unidad', 'unidad.id_materia', '=', 'materia.id_materia')
-        ->select("materia.id_materia", "materia.nombre_materia", "unidad.nombre_unidad", "grado.nivel_academico", "materia.estado_materia")
+        ->join('grado', 'grado_materia.id_grado', '=', 'grado.id_grado') 
+        ->select("materia.id_materia", "materia.nombre_materia","grado.nivel_academico", "materia.estado_materia")
         ->first();
 
         if ($materia == null) {
@@ -59,13 +57,8 @@ class MateriaController extends Controller
             return response()->json($mensaje, 404);
         }
 
-        if ($materia->estado_materia == 1) {
-            $materia->estado_materia= "activo";
-        }
-        else {
-            $materia->estado_materia = "inactivo";
-        }
-        
+        $unidades = Unidad::where('id_materia', $materia->id_materia)->get();
+        $materia->unidades = count($unidades);
 
         return response()->json($materia);
     }

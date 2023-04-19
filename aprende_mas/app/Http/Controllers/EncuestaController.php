@@ -30,8 +30,6 @@ class EncuestaController extends Controller
     public function obtener(Request $request, $id)
     {
         $encuesta = EncuestaModels::where("encuesta.id_encuesta", "=", $id)
-       //->join('pregunta', 'pregunta.id_encuesta', '=', 'encuesta.id_encuesta')
-        //Falta agregar #preguntas, no sabemos cómo 
         ->select("encuesta.id_encuesta","encuesta.nombre_encuesta","estado_encuesta") 
         ->first();
 
@@ -42,14 +40,8 @@ class EncuestaController extends Controller
             return response()->json($mensaje, 404);
         }
 
-
-       if ($encuesta->estado_encuesta == 1) {
-            $encuesta->estado_encuesta= "activo";
-        }
-        else {
-            $encuesta->estado_encuesta = "inactivo";
-        }
-        
+        $preguntas = PreguntaModels::where('id_encuesta', $encuesta->id_encuesta)->get();
+        $encuesta->preguntas = count($preguntas);
 
         return response()->json($encuesta);
     }

@@ -10,6 +10,7 @@ use DateTime;
 use App\Models\TemaModels;
 use App\Models\CuestionarioModels;
 use App\Models\MateriaModels;
+use App\Models\PreguntaModels;
 use App\Http\Requests\NuevoCuestionarioRequest;
 
 class TemaController extends Controller
@@ -29,14 +30,10 @@ class TemaController extends Controller
         ->select("tema.id_tema","tema.titulo","tema.estado_tema")
         ->get();
 
-        for ($i=0; $i < count($tema); $i++)
-        { 
-            if ($tema[$i]->estado_tema == 1) {
-                $tema[$i]->estado_tema = "activo";
-            }
-            else {
-                $tema[$i]->estado_tema = "inactivo";
-            }
+        foreach ($tema as $consulta) {
+            $preguntas = PreguntaModels::where('id_tema', $consulta->id_tema)->get();
+
+            $consulta->preguntas = count($preguntas);
         }
 
         return response()->json($tema); 
@@ -55,15 +52,9 @@ class TemaController extends Controller
             return response()->json($mensaje, 404);
         }
 
+        $preguntas = PreguntaModels::where('id_tema', $tema->id_tema)->get();
+        $tema->preguntas = count($preguntas);
    
-        if ($tema->estado_tema == 1) {
-            $tema->estado_tema= "activo";
-        }
-        else {
-            $tema->estado_tema = "inactivo";
-        }
-        
-
         return response()->json($tema);
     }
     //------------------------------------------------------------
