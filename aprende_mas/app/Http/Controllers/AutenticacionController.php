@@ -148,8 +148,7 @@ class AutenticacionController extends Controller
         return response()->json($respuesta);
     }
 //--------------------------------------------------------------------------------------------
-    public function perfil1(Request $request) //Preguntar si hay alguna forma de seleccionar los datos que queremos se muestre en este campo
-    //Mostrar fotos del perfil de alumno
+    public function perfil1(Request $request) //Perfil de alumno
     {
         $informacion = $request->user(); 
         $informacion->grado = GradoModels::where('id_grado', $informacion->id_grado)
@@ -161,7 +160,7 @@ class AutenticacionController extends Controller
 //--------------------------------------------------------------------------------------------
     public function perfil2(Request $request) //Perfil de administrador
     {
-        $informacion = $request->user(); 
+        $informacion = $request->user();
 
         return response()->json($informacion);
     }
