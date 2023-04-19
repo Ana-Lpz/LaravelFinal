@@ -20,16 +20,16 @@ class AutenticacionController extends Controller
     {
         $actual = new DateTime(); 
 
-        $imagen = $request->file('foto');
+        /*$imagen = $request->file('foto');
         $extension = $imagen->extension();
-        $nombreImagen = Str::slug($request->usuario) . "." . $extension;
+        $nombreImagen = Str::slug($request->usuario) . "." . $extension;*/
 
 
         $data = array(
             'nombre_registro' => $request->nombre_registro,
             'apellido_registro' => $request->apellido_registro,
             'nie' => $request->nie,
-            'foto' => $nombreImagen,
+            //'foto' => $nombreImagen,
             'email' => $request->email,
             'password' => bcrypt($request->password), 
             'password_confirmed' => bcrypt($request->password_confirmed),
@@ -39,7 +39,7 @@ class AutenticacionController extends Controller
         );
 
 
-       $imagen->storeAs('fotos-perfil/', $nombreImagen);
+       //$imagen->storeAs('fotos-perfil/', $nombreImagen);
 
 
         $nuevoAlumno = new RegistroModels($data);
@@ -56,15 +56,15 @@ class AutenticacionController extends Controller
     {
         $actual = new DateTime(); 
 
-        $imagen = $request->file('foto');
+        /*$imagen = $request->file('foto');
         $extension = $imagen->extension();
-        $nombreImagen = Str::slug($request->usuario) . "." . $extension;
+        $nombreImagen = Str::slug($request->usuario) . "." . $extension;*/
 
 
         $data = array( 
             'nombre_registro' => $request->nombre_registro,
             'apellido_registro' => $request->apellido_registro,
-            'foto' => $nombreImagen,
+            //'foto' => $nombreImagen,
             'email' => $request->email,
             'password' => bcrypt($request->password), 
             'password_confirmed' => bcrypt($request->password_confirmed),
@@ -74,7 +74,7 @@ class AutenticacionController extends Controller
         );
 
 
-        $imagen->storeAs('fotos-perfil/', $nombreImagen);
+        //$imagen->storeAs('fotos-perfil/', $nombreImagen);
 
 
         $nuevoAdmnistrador = new RegistroModels($data);
