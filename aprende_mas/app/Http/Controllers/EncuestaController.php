@@ -60,13 +60,6 @@ class EncuestaController extends Controller
         $nuevaEncuesta->save();
 
 
-        if ($nuevaEncuesta->estado_encuesta == 1) {
-            $nuevaEncuesta->estado_encuesta = "Activo";
-        }
-        else {
-            $nuevaEncuesta->estado_encuesta = "Inactivo";
-        }
-
         return response()->json($nuevaEncuesta);
     }
 //--------------------------------------------------------------------------------------------

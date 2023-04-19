@@ -10,15 +10,17 @@ use Illuminate\Support\Facades\DB;
 use DateTime;
 use App\Models\Unidad; 
 use App\Models\MateriaModels;
+use App\Models\TemaModels;
 use App\Models\CuestionarioModels; 
 use App\Models\GradoModels; 
+use App\Models\GradoMateria;
 
 
 
 class UnidadController extends Controller
 {
     public function listar1(Request $request) //Vista de alumno
-    {//Salen más resultados de los que deberían en Postman, pedir ayuda
+    { //Muestra demasiado datos
         $unidad = Unidad::whereNotNull("unidad.id_unidad");
 
         $unidad = DB::table('unidad')
@@ -27,32 +29,22 @@ class UnidadController extends Controller
         ->select("unidad.nombre_unidad","tema.titulo") 
         ->get();
 
-
         return response()->json($unidad); 
     }
     //--------------------------------------------------------------------------------------------
     public function listar2(Request $request) //Vista de administador
-    {
-        $unidad = Unidad::all();
-
+    {//salen demasiado resultados en postman
         $unidad = DB::table('unidad')
         ->join('materia', 'unidad.id_materia', '=', 'materia.id_materia')
-        //->join('cuestionario', 'cuestionario.id_unidad', '=', 'unidad.id_unidad') 
-        //Falta agregar el #cuestionarios
+        ->join('tema', 'tema.id_materia', '=', 'materia.id_materia')
         ->select("unidad.id_unidad","unidad.nombre_unidad","materia.nombre_materia","unidad.estado_unidad") 
         ->get();
 
+        foreach ($unidad as $consulta) {
+            $cuestionarios = TemaModels::where('id_materia', $consulta->id_unidad)->get();
 
-        for ($i=0; $i < count($unidad); $i++) 
-        { 
-            if ($unidad[$i]->estado_unidad == 1) {
-                $unidad[$i]->estado_unidad= "activo";
-            }
-            else {
-                $unidad[$i]->estado_unidad= "inactivo";
-            }
+            $consulta->cuestionarios = count($cuestionarios);
         }
-
 
         return response()->json($unidad); 
     }
@@ -73,58 +65,43 @@ class UnidadController extends Controller
             return response()->json($mensaje, 404);
         }
 
-
-       if ($unidad->estado_unidad  == 1) {
-            $unidad->estado_unidad = "activo";
-        }
-        else {
-            $unidad->estado_unidad  = "inactivo";
-        }
-        
-
         return response()->json($unidad);
     }
 //--------------------------------------------------------------------------------------------
    public function insertar(NuevaUnidadRequest $request)//Se tiene que poder agregar grado, pero no se muestra ni tampoco da error
     {
-        $unidad = DB::table('unidad')
-        ->join('materia', 'unidad.id_materia', '=', 'materia.id_materia')
-        ->join('cuestionario', 'cuestionario.id_unidad', '=', 'unidad.id_unidad') 
-        ->join('grado', 'cuestionario.id_grado', '=', 'grado.id_grado')
-        ->select("grado.nivel_academico")
-        ->get();
-
         $request->validated();
 
         $datos = array(
             "nombre_unidad" => $request->nombre_unidad,
             "estado_unidad" => $request->estado_unidad,
             "id_materia" => $request->id_materia,
-            "id_grado" => $request->id_materia,
         );
-
 
         $nuevaUnidad = new Unidad($datos);
         $nuevaUnidad->save();
 
 
-        if ($nuevaUnidad->estado_unidad == 1) {
-            $nuevaUnidad->estado_unidad = "Activo";
-        }
-        else {
-            $nuevaUnidad->estado_unidad = "Inactivo";
-        }
+        $nuevaRelacion = new GradoMateria([
+            'id_grado' => $request->nivel_academico,
+            'id_materia' => $nuevaUnidad->id_materia,
+        ]);
+        $nuevaRelacion->save();
 
         return response()->json($nuevaUnidad);
     }
 //--------------------------------------------------------------------------------------------
-    public function actualizar(Request $request, $id) //Preguntar si es necesario agregar lo de convertir los 1 y 0 a la palabra activo o inactivo
+    public function actualizar(Request $request, $id) 
     {
         $unidad=Unidad::where("id_unidad", $id)->first();
         $unidad->nombre_unidad = $request->nombre_unidad;
         $unidad->save();
 
-        return response()->json($unidad);
+        $mensaje = array( 
+            'mensaje' => "La unidad ha sido actualizada"
+        );
+
+        return response()->json($mensaje);
     }
     //------------------------------------------
     public function eliminar(Request $request, $id) 

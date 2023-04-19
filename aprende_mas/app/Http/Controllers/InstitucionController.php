@@ -84,12 +84,8 @@ class InstitucionController extends Controller
             "estado_institucion" => 1,
         );
 
-
         $nuevaInstitucion = new InstitucionModels($datos);
         $nuevaInstitucion->save();
-
-
-        
 
         return response()->json($nuevaInstitucion);
     }

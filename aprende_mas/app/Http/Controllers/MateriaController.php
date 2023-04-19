@@ -63,7 +63,7 @@ class MateriaController extends Controller
         return response()->json($materia);
     }
     //--------------------------------------------------------------------------------------------
-    public function insertar(NuevaMateriaRequest $request)
+    public function insertar(NuevaMateriaRequest $request) //No sale el campo de grado
     {
         $request->validated();
         
@@ -82,7 +82,7 @@ class MateriaController extends Controller
         $nuevaRelacion->save();
 
     
-        return response()->json($nuevaMateria, $nuevaRelacion);
+        return response()->json($nuevaMateria);
     }
     //--------------------------------------------------------------------------------------------
     public function actualizar(Request $request, $id)
@@ -91,7 +91,11 @@ class MateriaController extends Controller
         $materia->nombre_materia = $request->nombre_materia;
         $materia->save();
 
-        return response()->json($materia);
+        $mensaje = array( 
+            'mensaje' => "La materia ha sido actualizada"
+        );
+
+        return response()->json($mensaje);
     }
     //--------------------------------------------------------------------------------------------
     public function eliminar(Request $request, $id)

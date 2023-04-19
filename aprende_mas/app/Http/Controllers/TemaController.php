@@ -12,6 +12,7 @@ use App\Models\CuestionarioModels;
 use App\Models\MateriaModels;
 use App\Models\PreguntaModels;
 use App\Http\Requests\NuevoCuestionarioRequest;
+use App\Models\Unidad;
 
 class TemaController extends Controller
 {
@@ -60,36 +61,31 @@ class TemaController extends Controller
     //------------------------------------------------------------
     public function insertar(NuevoCuestionarioRequest $request) //No nos funcionó este método, pedir ayuda
     {
-        $tema = DB::table('tema')
-        ->join('materia', 'tema.id_materia', '=', 'materia.id_materia')
-        ->join('cuestionario', 'cuestionario.id_tema', '=', 'tema.id_tema')
-        ->join('unidad', 'cuestionario.id_unidad', '=', 'unidad.id_unidad') 
-        ->select("tema.estado_tema", "materia.nombre_materia", "unidad.nombre_unidad", "tema.titulo")
-        ->get();
-
         $request->validated();
 
         $datos = array(
             "estado_tema" => $request->estado_tema,
             "id_materia" => $request->id_materia,
-            "id_unidad" => $request->id_unidad,
             "titulo" => $request->titulo,
         );
-
-
 
         $nuevoTema = new TemaModels($datos);
         $nuevoTema->save();
 
+        $temaUnidad = new Unidad([
+            "id_unidad" => $request->id_unidad,
+            "nombre_unidad" => $request->nombre_unidad,
+            "estado_unidad" => 1,
+            "id_materia" => $request->id_materia,
+            "id_tema" => $request->id_tema,
+        ]);
+        $temaUnidad->save();
 
-        if ($nuevoTema->estado_tema == 1) {
-            $nuevoTema->estado_tema = "Activo";
-        }
-        else {
-            $nuevoTema->estado_tema = "Inactivo";
-        }
 
-        return response()->json($nuevoTema);
+        return response()->json([
+            "tema" => $nuevoTema , 
+            "nombreUnidad" => $temaUnidad->nombre_unidad
+        ],200);
     }
     //------------------------------------------------------------
     public function actualizar(Request $request, $id) //Este tampoco funcionó

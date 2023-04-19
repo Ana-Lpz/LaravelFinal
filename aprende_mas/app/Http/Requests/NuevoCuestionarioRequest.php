@@ -32,7 +32,7 @@ class NuevoCuestionarioRequest extends FormRequest
             "id_materia" => array(
                 "required", "integer"
             ),
-            "id_unidad" => array(
+            "nombreUnidad" => array(
                 "required", "integer",
             ),
             "titulo" => array(
@@ -47,7 +47,7 @@ class NuevoCuestionarioRequest extends FormRequest
         return array(
             "estado_tema.required" => "Se requiere ingresar un tipo de estado",
             "id_materia.required" => "Se requiere seleccionar una materia",
-            "id_unidad.required"=> "Se requiere seleccionar una unidad",
+            "nombreUnidad.required"=> "Se requiere seleccionar una unidad",
             "ttitulo.required" => "Se requiere un titulo sobre lo que trata el cuestionario",
         );
     }
