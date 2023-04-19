@@ -15,7 +15,7 @@ class EncuestaController extends Controller
 {
     public function listar(Request $request)
     {
-        
+        // 
 
         $encuesta = EncuestaModels::select("encuesta.id_encuesta","encuesta.nombre_encuesta","estado_encuesta");
         //->join('pregunta', 'pregunta.id_encuesta', '=', 'encuesta.id_encuesta')
