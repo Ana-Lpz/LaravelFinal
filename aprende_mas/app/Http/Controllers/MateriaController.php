@@ -63,7 +63,7 @@ class MateriaController extends Controller
         return response()->json($materia);
     }
     //--------------------------------------------------------------------------------------------
-    public function insertar(NuevaMateriaRequest $request) //No se muestra el campo de nivel_academico en postman
+    public function insertar(NuevaMateriaRequest $request)
     {
         $request->validated();
         
@@ -82,7 +82,7 @@ class MateriaController extends Controller
         $nuevaRelacion->save();
 
     
-        return response()->json($nuevaMateria);
+        return response()->json($nuevaMateria, $nuevaRelacion);
     }
     //--------------------------------------------------------------------------------------------
     public function actualizar(Request $request, $id)

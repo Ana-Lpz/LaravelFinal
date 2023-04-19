@@ -110,6 +110,10 @@ Route::post("/encuesta-eliminar/{id}", [EncuestaController::class, "eliminar"]);
 //Rutas de controlador de pregunta
 Route::post("/pregunta-insertar", [PreguntaController::class, "insertar"]);
 
+//Rutas de controlador Password
+Route::post("/auth/recuperar-clave", [PasswordController::class, "sendResetLinkResponse"]);
+Route::post("/auth/cambiar-clave", [PasswordController::class, "sendResetResponse"]);
+
 
 
 
