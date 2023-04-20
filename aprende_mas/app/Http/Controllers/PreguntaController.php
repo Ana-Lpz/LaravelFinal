@@ -17,7 +17,7 @@ use App\Http\Requests\NuevaPreguntaRequest;
 
 class PreguntaController extends Controller
 {
-    public function insertar(NuevaPreguntaRequest $request) //No muestra los datos de la tabla respuesta
+    public function insertar(NuevaPreguntaRequest $request) 
     {
         $request->validated();
 
@@ -33,14 +33,22 @@ class PreguntaController extends Controller
         $nuevaPregunta = new PreguntaModels($datos);
         $nuevaPregunta->save();
 
-        $nuevaRelacion = new Respuesta([
+        $respuesta = new Respuesta([
             "opcion1" => $request->opcion1,
             "opcion2" => $request->opcion2,
             "opcion3" => $request->opcion3,
-            "opcion4" => $request->puntaje,
+            "opcion4" => $request->opcion4,
+            "respuesta_correcta" => $request->respuesta_correcta,
+            "id_pregunta" => $request->id_pregunta,
         ]);
-        $nuevaRelacion->save();
+        $respuesta->save();
 
-        return response()->json($nuevaPregunta);
+        return response()->json([
+            "pregunta" => $nuevaPregunta , 
+            "respuesta 1" => $respuesta->opcion1,
+            "respuesta 2" => $respuesta->opcion2,
+            "respuesta 3" => $respuesta->opcion3,
+            "respuesta 4" => $respuesta->opcion4,
+        ],200);
     }
 }

@@ -23,6 +23,16 @@ class EncuestaController extends Controller
 
             $consulta->preguntas = count($preguntas);
         }
+
+        for ($i=0; $i < count($encuesta); $i++) 
+        { 
+            if ($encuesta[$i]->estado_encuesta == 1) {
+                $encuesta[$i]->estado_encuesta= "activo";
+            }
+            else {
+                $encuesta[$i]->estado_encuesta = "inactivo";
+            }
+        }
         
         return response()->json($encuesta);
     }
@@ -42,6 +52,13 @@ class EncuestaController extends Controller
 
         $preguntas = PreguntaModels::where('id_encuesta', $encuesta->id_encuesta)->get();
         $encuesta->preguntas = count($preguntas);
+
+        if ($encuesta->estado_encuesta == 1) {
+            $encuesta->estado_encuesta = "Activo";
+        }
+        else {
+            $encuesta->estado_encuesta = "Inactivo";
+        }
 
         return response()->json($encuesta);
     }
@@ -69,13 +86,7 @@ class EncuestaController extends Controller
         $encuesta->nombre_encuesta = $request->nombre_encuesta;
         $encuesta->save();
 
-        
-        if ($encuesta->estado_encuesta == 1) {
-            $encuesta->estado_encuesta = "Activo";
-        }
-        else {
-            $encuesta->estado_encuesta = "Inactivo";
-        }
+
 
         return response()->json($encuesta);
     }

@@ -39,6 +39,17 @@ class MateriaController extends Controller
             $consulta->unidades = count($unidades);
         }
 
+        
+        for ($i=0; $i < count($materia); $i++) 
+        { 
+            if ($materia[$i]->estado_materia == 1) {
+                $materia[$i]->estado_materia= "activo";
+            }
+            else {
+                $materia[$i]->estado_materia = "inactivo";
+            }
+        }
+
         return response()->json($materia); 
     }
     //--------------------------------------------------------------------------------------------
@@ -59,6 +70,13 @@ class MateriaController extends Controller
 
         $unidades = Unidad::where('id_materia', $materia->id_materia)->get();
         $materia->unidades = count($unidades);
+
+        if ($materia->estado_materia == 1) {
+            $materia->estado_materia = "Activo";
+        }
+        else {
+            $materia->estado_materia = "Inactivo";
+        }
 
         return response()->json($materia);
     }

@@ -37,6 +37,16 @@ class TemaController extends Controller
             $consulta->preguntas = count($preguntas);
         }
 
+        for ($i=0; $i < count($tema); $i++) 
+        { 
+            if ($tema[$i]->estado_tema == 1) {
+                $tema[$i]->estado_tema= "activo";
+            }
+            else {
+                $tema[$i]->estado_tema = "inactivo";
+            }
+        }
+
         return response()->json($tema); 
     }
     //------------------------------------------------------------
@@ -55,6 +65,13 @@ class TemaController extends Controller
 
         $preguntas = PreguntaModels::where('id_tema', $tema->id_tema)->get();
         $tema->preguntas = count($preguntas);
+
+        if ($tema->estado_tema == 1) {
+            $tema->estado_tema = "Activo";
+        }
+        else {
+            $tema->estado_tema = "Inactivo";
+        }
    
         return response()->json($tema);
     }
@@ -84,20 +101,20 @@ class TemaController extends Controller
 
         return response()->json([
             "tema" => $nuevoTema , 
-            "nombreUnidad" => $temaUnidad->nombre_unidad
+            "unidad" => $temaUnidad->nombre_unidad
         ],200);
     }
     //------------------------------------------------------------
-    public function actualizar(Request $request, $id) //Este tampoco funcionó
+    public function actualizar(Request $request, $id) 
     {
-        $tema=TemaModels::where("titulo", $id)->first();
+        $tema=TemaModels::where("id_tema", $id)->first();
         $tema->titulo = $request->titulo;
         $tema->save();
 
         return response()->json($tema);
     }
     //------------------------------------------------------------
-    public function eliminar(Request $request, $id) //Este sí funciona
+    public function eliminar(Request $request, $id) 
     {
         $tema = TemaModels::where("id_tema", $id)->first();
 

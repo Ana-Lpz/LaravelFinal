@@ -46,6 +46,16 @@ class UnidadController extends Controller
             $consulta->cuestionarios = count($cuestionarios);
         }
 
+        for ($i=0; $i < count($unidad); $i++) 
+        { 
+            if ($unidad[$i]->estado_unidad == 1) {
+                $unidad[$i]->estado_unidad= "activo";
+            }
+            else {
+                $unidad[$i]->estado_unidad = "inactivo";
+            }
+        }
+
         return response()->json($unidad); 
     }
     //--------------------------------------------------------------------------------------------
@@ -63,6 +73,13 @@ class UnidadController extends Controller
             $mensaje = array("error" => "La unidad seleccionada no fue encontrada"); 
 
             return response()->json($mensaje, 404);
+        }
+
+        if ($unidad->estado_unidad == 1) {
+            $unidad->estado_unidad = "Activo";
+        }
+        else {
+            $unidad->estado_unidad = "Inactivo";
         }
 
         return response()->json($unidad);
