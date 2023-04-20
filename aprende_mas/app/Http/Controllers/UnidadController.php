@@ -85,7 +85,7 @@ class UnidadController extends Controller
         return response()->json($unidad);
     }
 //--------------------------------------------------------------------------------------------
-   public function insertar(NuevaUnidadRequest $request)//Se tiene que poder agregar grado, pero no se muestra ni tampoco da error
+   public function insertar(NuevaUnidadRequest $request)
     {
         $request->validated();
 
@@ -100,12 +100,15 @@ class UnidadController extends Controller
 
 
         $nuevaRelacion = new GradoMateria([
-            'id_grado' => $request->nivel_academico,
+            'id_grado' => $request->id_grado,
             'id_materia' => $nuevaUnidad->id_materia,
         ]);
         $nuevaRelacion->save();
 
-        return response()->json($nuevaUnidad);
+        return response()->json([
+            "unidad" => $nuevaUnidad , 
+            "grado" => $nuevaRelacion->id_grado
+        ],200);
     }
 //--------------------------------------------------------------------------------------------
     public function actualizar(Request $request, $id) 
