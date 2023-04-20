@@ -69,14 +69,6 @@ class GradoController extends Controller
         $nuevoGrado = new GradoModels($datos);
         $nuevoGrado->save();
 
-
-        if ($nuevoGrado->estado_grado == 1) {
-            $nuevoGrado->estado_grado = "Activo";
-        }
-        else {
-            $nuevoGrado->estado_grado = "Inactivo";
-        }
-
         return response()->json($nuevoGrado);
     }
 //--------------------------------------------------------------------------------------------

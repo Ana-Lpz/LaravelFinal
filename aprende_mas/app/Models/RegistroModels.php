@@ -34,5 +34,10 @@ class RegistroModels extends Authenticatable
         "id_rol",
     ];
 
+    public function sendPasswordResetNotification($token)
+    {
+        $this->notify(new \App\Notifications\MailResetPasswordNotification($token));
+    }
+    
     protected $primaryKey = "id_registro";
 }

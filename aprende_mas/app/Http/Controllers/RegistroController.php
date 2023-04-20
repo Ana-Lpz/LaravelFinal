@@ -30,7 +30,6 @@ class RegistroController extends Controller
         ->join("registro_institucion", 'registro.id_registro', '=', 'registro_institucion.id_registro') 
         ->join('institucion', 'registro_institucion.id_institucion', '=', 'institucion.id_institucion') 
         ->join('grado', 'registro.id_grado', '=', 'grado.id_grado') 
-        //Preguntar como agrupar el campo apellido y nombre en uno solo porque en la vista sale así
         ->select("registro.foto", "registro.nombre_registro", "registro.apellido_registro", "registro.nie", "registro.correo","institucion.nombre_inst","grado.nivel_academico", "registro.estado_registro")
         ->get();
 
@@ -50,11 +49,11 @@ class RegistroController extends Controller
     public function listar2(Request $request) //Listar de administrador
     {
         $administrador = RegistroModels::where("registro.id_rol", "=", 2)
-        //Preguntar como agrupar el campo apellido y nombre en uno solo porque en la vista sale así
         ->select("registro.foto", "registro.nombre_registro", "registro.apellido_registro", "registro.correo","usuario.visita","usuario.sesiones", "registro.estado_registro")
         ->join('usuario', 'registro.id_usuario', '=', 'usuario.id_usuario');
         $administrador = $administrador->get();
 
+        
         for ($i=0; $i < count($administrador); $i++) 
         { 
             if ($administrador[$i]->estado_registro == 1) {
@@ -98,7 +97,6 @@ class RegistroController extends Controller
 
         return response()->json($alumno);
     }
-
 //--------------------------------------------------------------------------------------------
     public function obtener2(Request $request, $id) //Obtener de administrador
     {
@@ -138,9 +136,6 @@ class RegistroController extends Controller
             "apellido_registro" => $request->apellido_registro,
             "nie" => $request->nie,
             "id_grado" => $request->id_grado,
-            /*id_institucion no sale en postman porque no está en la tabla registro, tiene su propia
-            tabla pivote, preguntar cómo hacer para que salga*/
-            "id_institucion" => $request->id_institucion,
             "fecha_nacimiento" => $request->fecha_nacimiento,
             "genero" => $request->genero,
             "id_municipio" => $request->id_municipio,
@@ -149,100 +144,40 @@ class RegistroController extends Controller
             "estado_registro" => 1
         );
 
-
         $nuevoAlumno = new RegistroModels($datos);
         $nuevoAlumno->save();
 
 
-        switch ($nuevoAlumno->id_grado) 
-        { 
-            case 1:
-                $nuevoAlumno->id_grado = "Séptimo";
-                break;
-            case 2:
-                $nuevoAlumno->id_grado = "Octavo";
-                break;
-            case 3:
-                $nuevoAlumno->id_grado = "Noveno";
-                break;
-            case 4:
-                $nuevoAlumno->id_grado = "Primer Año Bachillerato";
-                break;
-            case 5:
-                $nuevoAlumno->id_grado = "Segundo Año Bachillerato";
-                break;
-        }
+        $registroInstitucion = new RegistroInstitucion([
+            "id_registro" => $request->id_registro,
+            "id_institucion" => $request->id_institucion
+        ]);
+        $registroInstitucion->save();
 
 
-        switch ($nuevoAlumno->id_municipio) 
-        { 
-            case 1:
-                $nuevoAlumno->id_municipio = "Chalatenango";
-                break;
-            case 2:
-                $nuevoAlumno->id_municipio = "Zacatecoluca";
-                break;
-            case 3:
-                $nuevoAlumno->id_municipio = "San Vicente";
-                break;
-            case 4:
-                $nuevoAlumno->id_municipio = "Cuscatlán";
-                break;
-            case 5:
-                $nuevoAlumno->id_municipio = "San Salvador";
-                break;
-            case 6:
-                $nuevoAlumno->id_municipio = "Santa Tecla";
-                break;
-            case 7:
-                $nuevoAlumno->id_municipio = "Sensuntepeque";
-                break;
-        }
-
-
-        if ($nuevoAlumno->estado_registro == 1) 
-        {
-            $nuevoAlumno->estado_registro = "Activo";
-        }
-        else {
-            $nuevoAlumno->estado_registro = "Inactivo";
-        }
-
-        return response()->json($nuevoAlumno);
+        return response()->json([
+            "alumno" => $nuevoAlumno , 
+            "institucion" => $registroInstitucion->id_institucion
+        ],200);
     }
 //--------------------------------------------------------------------------------------------
     public function insertar2(NuevoAdministradorRequest $request) //Insertar de administrador
     {
-        $administrador = RegistroModels::where("registro.id_rol", "=", 2)// No muestra los campos de usuario
-        //Preguntar como agrupar el campo apellido y nombre en uno solo porque en la vista sale así
-        ->select("registro.foto", "registro.nombre_registro", "registro.apellido_registro", "registro.correo","usuario.visita","usuario.sesiones", "registro.estado_registro")
-        ->join('usuario', 'registro.id_usuario', '=', 'usuario.id_usuario');
-        $administrador = $administrador->get();
-
         $request->validated();
 
         $datos = array(
             "nombre_registro" => $request->nombre_registro,
             "apellido_registro" => $request->apellido_registro,
-            "correo" => $request->correo,
-            'contra' => bcrypt($request->contra), 
-            'repetir_contra' => bcrypt($request->contra),
+            "email" => $request->email,
+            "password" => $request->password,
+            "password_confirmed" => $request->password_confirmed,
 
             "fecha_registro" => (new DateTime())->format("Y-m-d"),
             "estado_registro" => 1
         );
 
-
         $nuevoAdministrador = new RegistroModels($datos);
         $nuevoAdministrador->save();
-
-
-        if ($nuevoAdministrador->estado_registro == 1) {
-            $nuevoAdministrador->estado_registro = "Activo";
-        }
-        else {
-            $nuevoAdministrador->estado_registro = "Inactivo";
-        }
 
         return response()->json($nuevoAdministrador);
     }
@@ -254,14 +189,15 @@ class RegistroController extends Controller
         $alumno->apellido_registro = $request->apellido_registro;
         $alumno->nie = $request->nie;
         $alumno->id_grado = $request->id_grado;
-        //Revisar institucion porque da error porque no está directamente en la tabla registro
-        /*$registro->id_institucion = $request->id_institucion;*/
         $alumno->fecha_nacimiento = $request->fecha_nacimiento;
         $alumno->genero = $request->genero;
         $alumno->id_municipio = $request->id_municipio;
         $alumno->save();
 
-        return response()->json($alumno);
+        $institucion = RegistroInstitucion::where("id_registro", $id)->first();
+        $institucion->id_institucion = $request->id_institucion;
+
+        return response()->json([$alumno, "institucion" => $institucion->id_institucion]);
     }
 //--------------------------------------------------------------------------------------------
     public function actualizar2(Request $request, $id)
@@ -269,7 +205,7 @@ class RegistroController extends Controller
         $administrador=RegistroModels::where("id_registro", $id)->first();
         $administrador->nombre_registro = $request->nombre_registro;
         $administrador->apellido_registro = $request->apellido_registro;
-        $administrador->correo = $request->correo;
+        $administrador->email = $request->email;
         $administrador->save();
 
         return response()->json($administrador);

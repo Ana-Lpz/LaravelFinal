@@ -7,6 +7,9 @@ use Illuminate\Http\Request;
 use App\Models\User; 
 use App\Models\GradoModels; 
 use App\Models\RegistroModels; 
+use App\Models\MunicipioModels; 
+use App\Models\InstitucionModels; 
+use App\Models\RegistroInstitucion; 
 use DateTime;
 use Auth;
 use Carbon\Carbon;
@@ -18,18 +21,16 @@ class AutenticacionController extends Controller
 {
     public function registro1(Request $request) //Registro de usuario
     {
-        $actual = new DateTime(); 
-
-        /*$imagen = $request->file('foto');
+        $imagen = $request->file('foto');
         $extension = $imagen->extension();
-        $nombreImagen = Str::slug($request->usuario) . "." . $extension;*/
+        $nombreImagen = Str::slug($request->usuario) . "." . $extension;
 
 
         $data = array(
             'nombre_registro' => $request->nombre_registro,
             'apellido_registro' => $request->apellido_registro,
             'nie' => $request->nie,
-            //'foto' => $nombreImagen,
+            'foto' => $nombreImagen,
             'email' => $request->email,
             'password' => bcrypt($request->password), 
             'password_confirmed' => bcrypt($request->password_confirmed),
@@ -39,7 +40,7 @@ class AutenticacionController extends Controller
         );
 
 
-       //$imagen->storeAs('fotos-perfil/', $nombreImagen);
+       $imagen->storeAs('fotos-perfil/', $nombreImagen);
 
 
         $nuevoAlumno = new RegistroModels($data);
@@ -54,17 +55,15 @@ class AutenticacionController extends Controller
 //-------------------------------------------------------------------------------------------- 
     public function registro2(Request $request) //Registro de administrador
     {
-        $actual = new DateTime(); 
-
-        /*$imagen = $request->file('foto');
+        $imagen = $request->file('foto');
         $extension = $imagen->extension();
-        $nombreImagen = Str::slug($request->usuario) . "." . $extension;*/
+        $nombreImagen = Str::slug($request->usuario) . "." . $extension;
 
 
         $data = array( 
             'nombre_registro' => $request->nombre_registro,
             'apellido_registro' => $request->apellido_registro,
-            //'foto' => $nombreImagen,
+            'foto' => $nombreImagen,
             'email' => $request->email,
             'password' => bcrypt($request->password), 
             'password_confirmed' => bcrypt($request->password_confirmed),
@@ -74,7 +73,7 @@ class AutenticacionController extends Controller
         );
 
 
-        //$imagen->storeAs('fotos-perfil/', $nombreImagen);
+        $imagen->storeAs('fotos-perfil/', $nombreImagen);
 
 
         $nuevoAdmnistrador = new RegistroModels($data);
@@ -151,9 +150,13 @@ class AutenticacionController extends Controller
     public function perfil1(Request $request) //Perfil de alumno
     {
         $informacion = $request->user(); 
-        $informacion->grado = GradoModels::where('id_grado', $informacion->id_grado)
-                                        ->select('nivel_academico')
-                                        ->first();
+        $informacion->departamento = MunicipioModels::where('id_municipio', $informacion->id_municipio)
+                                    ->select('id_departamento')
+                                    ->first();
+
+        $informacion->institucion = RegistroInstitucion::where('id_registro', $informacion->id_registro)
+                                    ->select('id_institucion')
+                                    ->first();
 
         return response()->json($informacion);
     }
@@ -165,7 +168,7 @@ class AutenticacionController extends Controller
         return response()->json($informacion);
     }
 //--------------------------------------------------------------------------------------------
-    public function cerrarSesion(Request $request) //Preguntar si es necesario tener 2 cierres de sesión distintos. Uno para alumnos y otro para administradores
+    public function cerrarSesion(Request $request) 
     {
         $informacion = $request->user();  
 

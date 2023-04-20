@@ -15,6 +15,8 @@ use App\Http\Controllers\InsigniaController;
 use App\Http\Controllers\GradoController;
 use App\Http\Controllers\UnidadController;
 use App\Http\Controllers\UsuarioController;
+use App\Http\Controllers\PasswordController;
+use App\Http\Controllers\ReporteController;
 use App\Http\Controllers\MunicipioController;
 
 use App\Http\Controllers\AutenticacionController;
@@ -115,8 +117,19 @@ Route::post("/pregunta-insertar", [PreguntaController::class, "insertar"]);
 Route::post("/auth/recuperar-clave", [PasswordController::class, "sendResetLinkResponse"]);
 Route::post("/auth/cambiar-clave", [PasswordController::class, "sendResetResponse"]);
 
-//Rutas controlador municipio
-Route::get("/municipio-listar", [MunicipioController::class, "listar"]);
+//Ruta de controlador municipio
+Route::get("/municipio-listar", [ReporteController::class, "listar"]);
+
+//Rutas de controlador Reporte
+Route::get("/reporte-listar1", [ReporteController::class, "listar"]);
+Route::get("/reporte-listar2", [ReporteController::class, "listar2"]);
+Route::get("/reporte-listar3", [ReporteController::class, "listar3"]);
+Route::get("/reporte-listar4", [ReporteController::class, "listar4"]);
+Route::get("/reporte-listar5", [ReporteController::class, "listar5"]);
+Route::get("/reporte-listar6", [ReporteController::class, "listar6"]);
+Route::get("/reporte-listar7", [ReporteController::class, "listar7"]);
+Route::get("/reporte-listar8", [ReporteController::class, "listar8"]);
+
 
 
 

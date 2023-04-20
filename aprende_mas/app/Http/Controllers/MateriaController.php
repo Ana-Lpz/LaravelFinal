@@ -79,10 +79,14 @@ class MateriaController extends Controller
             'id_grado' => $request->nivel_academico,
             'id_materia' => $nuevaMateria->id_materia,
         ]);
+
         $nuevaRelacion->save();
 
     
-        return response()->json($nuevaMateria);
+        return response()->json([
+            "materia" => $nuevaMateria , 
+            "grado" => $nuevaRelacion->id_grado
+        ],200);
     }
     //--------------------------------------------------------------------------------------------
     public function actualizar(Request $request, $id)

@@ -59,7 +59,7 @@ class TemaController extends Controller
         return response()->json($tema);
     }
     //------------------------------------------------------------
-    public function insertar(NuevoCuestionarioRequest $request) //No nos funcionó este método, pedir ayuda
+    public function insertar(NuevoCuestionarioRequest $request) 
     {
         $request->validated();
 

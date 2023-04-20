@@ -32,13 +32,13 @@ class NuevoAdministradorRequest extends FormRequest
             "apellido_registro" => array(
                 "required", "string"
             ),
-            "correo" => array(
+            "email" => array(
                 'regex: /^(([^<>()\[\]\.,;:\s@\”]+(\.[^<>()\[\]\.,;:\s@\”]+)*)|(\”.+\”))@(([^<>()[\]\.,;:\s@\”]+\.)+[^<>()[\]\.,;:\s@\”]{2,})$/'
             ),
-            "contra" => array(
+            "password" => array(
                 "required", "string"
             ),
-            "repetir_contra" => array(
+            "password_confirmed" => array(
                 "required", "string"
             ),
         ];
@@ -50,9 +50,9 @@ class NuevoAdministradorRequest extends FormRequest
         return array(
             "nombre_registro.required" => "Se requiere un nombre",
             "apellido_registro.required" => "Se requiere un apellido",
-            "correo.regex" => "Se requiere un correo electrónico",
-            "contra.required" => "Se requiere una contraseña",
-            "repetir_contra.required" => "Se requiere repetir la contraseña",
+            "email.regex" => "Se requiere un correo electrónico",
+            "password.required" => "Se requiere una contraseña",
+            "password_confirmedrequired" => "Se requiere repetir la contraseña",
         );
     }
 
